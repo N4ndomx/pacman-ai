@@ -1,5 +1,5 @@
 import { ElementRef } from "@angular/core";
-import { BallServiceService } from "../services/ball-service.service";
+import { BallServiceService } from "../../services/ball-service.service";
 
 // Clase para la pelota
 export class Ball {

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Ball } from './bal';
+import { Ball } from '../game/models/bal';
 import { BallServiceService } from '../services/ball-service.service';
 import { Pacman } from '../game/models/pacman';
 import { TableroService } from '../services/tablero.service';
