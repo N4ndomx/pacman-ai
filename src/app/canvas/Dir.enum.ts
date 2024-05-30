@@ -1,0 +1,6 @@
+export enum DIRECTION {
+    DIRECTION_RIGHT = 4,
+    DIRECTION_UP = 3,
+    DIRECTION_LEFT = 2,
+    DIRECTION_BOTTOM = 1
+}
