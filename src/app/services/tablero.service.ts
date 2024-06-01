@@ -5,9 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class TableroService {
   oneBlockSize = 20;
-  private wallSpaceWidth = this.oneBlockSize / 1.6;
+  private wallSpaceWidth = this.oneBlockSize / 1;
   private wallOffset = (this.oneBlockSize - this.wallSpaceWidth) / 2;
   wallInnerColor = "black";
+  puntaje_ganar = 0
 
   map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -35,5 +36,20 @@ export class TableroService {
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ];
 
-  constructor() { }
+  constructor() {
+    this.puntaje_ganar = this.countTwos()
+    console.log(this.puntaje_ganar)
+  }
+
+  countTwos(): number {
+    let count = 0;
+    for (let i = 0; i < this.map.length; i++) {
+      for (let j = 0; j < this.map[0].length; j++) {
+        if (this.map[i][j] === 2) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
 }

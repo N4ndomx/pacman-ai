@@ -7,6 +7,7 @@ export class Pacman {
     private frameCount: number
     private currentFrame = 1;
     private pacmanImage: HTMLImageElement = new Image();
+    score: number = 0
 
 
     constructor(
@@ -17,7 +18,7 @@ export class Pacman {
         private speed: number,
         private canvas: HTMLCanvasElement,
         private tablero: TableroService,
-        private ctx: CanvasRenderingContext2D
+        private ctx: CanvasRenderingContext2D,
     ) {
         this.pacmanImage.src = 'assets/img/animations.gif'
         this.direction = DIRECTION.DIRECTION_RIGHT;
@@ -58,6 +59,7 @@ export class Pacman {
     //}
     //
 
+
     logPosition() {
         const mapX = this.getMapX();
         const mapY = this.getMapY();
@@ -70,16 +72,17 @@ export class Pacman {
     }
 
 
-    eat(map: number[][]) {
-        for (let i = 0; i < map.length; i++) {
-            for (let j = 0; j < map[0].length; j++) {
-                if (map[i][j] == 2 && this.getMapX() == j && this.getMapY() == i) {
-                    map[i][j] = 3;
-                    // score++;
+    eat(map: number[][],) {
+        for (let i = 0; i < map.length + 1; i++) {
+            for (let j = 0; j < map[0].length + 1; j++) {
+                if (map[j][i] === 2 && this.getMapX() == j && this.getMapY() == i) {
+                    map[j][i] = 0;
+                    this.score++
                 }
             }
         }
     }
+
 
     moveForwards() {
         switch (this.direction) {
@@ -139,15 +142,20 @@ export class Pacman {
             this.moveBackwards();
         }
     }
-
-    getMapX(): number {
-        return Math.floor(this.x / this.tablero.oneBlockSize);
+    mapToCanvasCoordinates(mapX: number, mapY: number): { x: number, y: number } {
+        const canvasX = mapX * this.tablero.oneBlockSize;
+        const canvasY = mapY * this.tablero.oneBlockSize;
+        console.log("Traducción : " + "X=" + canvasY + ", Y=" + canvasX);
+        return { x: canvasY, y: canvasX };
     }
 
-    getMapY(): number {
+    getMapX(): number {
         return Math.floor(this.y / this.tablero.oneBlockSize);
     }
 
+    getMapY(): number {
+        return Math.floor(this.x / this.tablero.oneBlockSize);
+    }
     getMapXRightSide() {
         return parseInt(((this.x * 0.99 + this.tablero.oneBlockSize) / this.tablero.oneBlockSize).toString());
     }
@@ -159,6 +167,8 @@ export class Pacman {
     changeAnimation() {
         this.currentFrame = this.currentFrame == this.frameCount ? 1 : this.currentFrame + 1;
     }
+
+
 
     draw() {
         this.ctx.save();
@@ -181,6 +191,9 @@ export class Pacman {
     setNextDirection(direction: DIRECTION): void {
 
         this.nextDirection = direction;
+    }
+    getScore(): number {
+        return this.score
     }
 }
 

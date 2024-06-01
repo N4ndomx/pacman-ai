@@ -2,11 +2,14 @@ import { HttpClient } from "@angular/common/http";
 import { DIRECTION } from "src/app/canvas/Dir.enum";
 import { GhoststepsService } from "src/app/services/ghoststeps.service";
 import { TableroService } from "src/app/services/tablero.service";
+import { Pacman } from "./pacman";
 
 export class Ghost {
     private ghostImage: HTMLImageElement = new Image();
     private frameCount: number;
     private currentFrame = 1;
+    private moveSpeed: number;
+    private pathQueue: { x: number, y: number }[] = [];
 
     constructor(
         private x: number,
@@ -18,41 +21,67 @@ export class Ghost {
         private canvas: HTMLCanvasElement,
         private tablero: TableroService,
         private ctx: CanvasRenderingContext2D,
+        pacman: Pacman,
+        ghostser: GhoststepsService
     ) {
-        this.ghostImage.src = 'assets/img/ghost.png'
+        this.ghostImage.src = 'assets/img/ghost.png';
         this.frameCount = 7;
         this.currentFrame = 1;
+        this.moveSpeed = 3.7; // Velocidad de movimiento en píxeles por frame
+
         setInterval(() => {
             this.changeAnimation();
         }, 100);
+
+        this.preloadPathQueue(pacman, ghostser); // Preload initial path
     }
 
-    async moveProcess(ghostservi: GhoststepsService) {
-        this.logPosition(); // Para depuración
-        const init = {
-            x: this.getMapX(),
-            y: this.getMapY()
-        };
-        const fin = {
-            x: 1,
-            y: 1
-        };
-        const nextPosition = await ghostservi.getNextPositionFromAPI(init, fin);
-        console.log(`Sig posicion en MAP: ${nextPosition?.x}, ${nextPosition?.y}`);
-        if (nextPosition) {
-            const mc = this.mapToCanvasCoordinates(nextPosition.x, nextPosition.y);
-            console.log(`Converted canvas coordinates: x=${mc.x}, y=${mc.y}`);
-            this.x = mc.x;
-            this.y = mc.y;
+    async preloadPathQueue(pacman: Pacman, ghostservi: GhoststepsService) {
+        while (this.pathQueue.length < 3) { // Maintain a buffer of 5 positions
+            const init = this.pathQueue.length > 0 ? this.pathQueue[this.pathQueue.length - 1] : { x: this.getMapX(), y: this.getMapY() };
+            const fin = { x: pacman.getMapX(), y: pacman.getMapY() };
+            const nextPosition = await ghostservi.getNextPositionFromAPI(init, fin);
+            if (nextPosition) {
+                this.pathQueue.push(nextPosition);
+            }
         }
-        if (this.checkCollisions()) {
-            console.log("Collision detected!");
-            return;
+    }
+
+    async moveProcess(pacman: Pacman, ghostservi: GhoststepsService) {
+        if (this.pathQueue.length === 0) {
+            await this.preloadPathQueue(pacman, ghostservi); // Ensure the queue is preloaded
         }
-        if (this.x + this.width > this.canvas.width) {
-            this.x = 0;
-        } else if (this.x < 0) {
-            this.x = this.canvas.width - this.width;
+
+        if (this.pathQueue.length > 0) {
+            const nextTarget = this.pathQueue[0];
+            const target = this.mapToCanvasCoordinates(nextTarget.x, nextTarget.y);
+            const dx = target.x - this.x;
+            const dy = target.y - this.y;
+
+            if (Math.abs(dx) > this.moveSpeed) {
+                this.x += Math.sign(dx) * this.moveSpeed;
+            } else {
+                this.x = target.x;
+            }
+
+            if (Math.abs(dy) > this.moveSpeed) {
+                this.y += Math.sign(dy) * this.moveSpeed;
+            } else {
+                this.y = target.y;
+            }
+
+            if (this.x === target.x && this.y === target.y) {
+                this.pathQueue.shift(); // Remove the reached position
+            }
+
+            if (this.x + this.width > this.canvas.width) {
+                this.x = 0;
+            } else if (this.x < 0) {
+                this.x = this.canvas.width - this.width;
+            }
+
+            // Preload new positions if needed
+            await this.preloadPathQueue(pacman, ghostservi);
         }
     }
 

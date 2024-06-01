@@ -23,6 +23,10 @@ export class CanvasComponent implements AfterViewInit {
   private ctx!: CanvasRenderingContext2D;
   pacman!: Pacman
   ghost!: Ghost
+  ghost2!: Ghost
+  scoreReady: boolean = false;
+
+  fps: number = 10;
 
   constructor(
     // private ballService: BallServiceService,
@@ -36,20 +40,22 @@ export class CanvasComponent implements AfterViewInit {
     this.ctx = this.canvas.nativeElement.getContext('2d')!;
     this.ctx.fillStyle = this.tableroService.wallInnerColor
     this.ghostservi.map = this.tableroService.map
-    // this.drawCuadrado();
 
     // this.ball = new Ball(this.canvas.nativeElement.width / 4, this.canvas.nativeElement.height / 4, 30, 'blue', 2, 2, this.ctx);
     // this.ball = new Ball(10, 10, 10, 'blue', 1, 100, this.ctx);
 
     // this.pacman = new Pacman(0, 0, 20, 20, 2, this.canvas.nativeElement, this.tableroService, this.ctx);
-    // this.pacman = new Pacman(this.tableroService.oneBlockSize,
-    //   this.tableroService.oneBlockSize,
-    //   this.tableroService.oneBlockSize,
-    //   this.tableroService.oneBlockSize,
-    //   this.tableroService.oneBlockSize / 5,
-    //   this.canvas.nativeElement,
-    //   this.tableroService,
-    //   this.ctx);
+    this.pacman = new Pacman(
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize / 3,
+      this.canvas.nativeElement,
+      this.tableroService,
+      this.ctx,
+    );
+    this.scoreReady = true
     let pos = findValidGhostPosition(this.tableroService.map, this.tableroService.oneBlockSize);
     this.ghost = new Ghost(
       // 80, 80,
@@ -60,9 +66,23 @@ export class CanvasComponent implements AfterViewInit {
       this.tableroService.oneBlockSize,
       this.tableroService.oneBlockSize,
       this.canvas.nativeElement,
-      this.tableroService, this.ctx)
+      this.tableroService, this.ctx,
+      this.pacman, this.ghostservi
+    )
+    this.ghost2 = new Ghost(
+      80, 80,
+      // pos.x ?? 0,
+      // pos.y ?? 0,
+      ghostImageLocations[1].x,
+      ghostImageLocations[1].y,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.canvas.nativeElement,
+      this.tableroService, this.ctx,
+      this.pacman, this.ghostservi
+    )
 
-    setInterval(() => this.updateAndDraw(), 100);
+    setInterval(() => this.updateAndDraw(), 1000 / this.fps);
   }
 
   drawCuadrado() {
@@ -99,11 +119,17 @@ export class CanvasComponent implements AfterViewInit {
     // Actualiza la posición y dibuja la pelota
     // this.ball.procesoMover(this.ballService, this.canvas);
     // this.ball.update(this.canvas.nativeElement)
-    // this.pacman.moveProcess()
-    // this.pacman.draw()
-    this.ghost.moveProcess(this.ghostservi)
+    this.pacman.moveProcess()
+    this.pacman.eat(this.tableroService.map)
+    console.log(this.pacman.getScore())
+    this.pacman.draw()
+    this.ghost.moveProcess(this.pacman, this.ghostservi)
     this.ghost.draw()
+    this.ghost2.moveProcess(this.pacman, this.ghostservi)
+    this.ghost2.draw()
   }
+
+
 
   private drawTablero(): void {
     const blockSize = this.tableroService.oneBlockSize;
@@ -160,4 +186,6 @@ export class CanvasComponent implements AfterViewInit {
     }
   }
 }
+
+
 
