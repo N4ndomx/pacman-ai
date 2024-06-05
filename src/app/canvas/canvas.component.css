@@ -46,6 +46,21 @@ body::before {
     font-size: 24px;
     color: yellow;
     text-shadow: 0 0 5px rgba(255, 255, 0, 0.5), 0 0 10px rgba(255, 255, 0, 0.5), 0 0 20px rgba(255, 255, 0, 0.5);
+    display: flex; /* Añade esto para alinear los elementos horizontalmente */
+    align-items: center; /* Añade esto para alinear los elementos verticalmente */
+}
+
+.lives-container {
+    display: flex;
+    margin-left: 5px; 
+    background-color: transparent;
+}
+
+.life-icon {
+    width: 15px;
+    height: 15px;
+    margin: 0 3px;
+    background-color: transparent;
 }
 
 #canvasElement {

@@ -25,6 +25,7 @@ export class CanvasComponent implements AfterViewInit {
   ghost!: Ghost
   ghost2!: Ghost
   scoreReady: boolean = false;
+  lives: number = 3; 
 
   fps: number = 10;
 
@@ -185,6 +186,11 @@ export class CanvasComponent implements AfterViewInit {
         break;
     }
   }
+
+  reinicio() {
+    location.reload();
+  }
+
 }
 
 
