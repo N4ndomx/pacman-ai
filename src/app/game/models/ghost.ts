@@ -1,5 +1,3 @@
-import { HttpClient } from "@angular/common/http";
-import { DIRECTION } from "src/app/canvas/Dir.enum";
 import { GhoststepsService } from "src/app/services/ghoststeps.service";
 import { TableroService } from "src/app/services/tablero.service";
 import { Pacman } from "./pacman";

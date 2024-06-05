@@ -30,21 +30,17 @@ export class GhoststepsService {
       final: [fin.x, fin.y]
     }
     // console.log(JSON.stringify(body))
-    try {
-      const response: any = await this.http.post(this.apiUrl + '/a-star', body, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }).toPromise();
-      const paso: number[] = response.camino[1]
-      const err = {
-        x: paso[0],
-        y: paso[1]
-      }
-      return err;
-    } catch (error) {
-      console.error('Error fetching next position from API', error);
-      return null;
+    const response: any = await this.http.post(this.apiUrl + '/a-star', body, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).toPromise();
+    const paso: number[] = response.camino[1]
+    const err = {
+      x: paso[0],
+      y: paso[1]
     }
+    return err;
+
   }
 }
