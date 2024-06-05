@@ -21,8 +21,8 @@ export class Ghost {
         private canvas: HTMLCanvasElement,
         private tablero: TableroService,
         private ctx: CanvasRenderingContext2D,
-        pacman: Pacman,
-        ghostser: GhoststepsService
+        private pacman: Pacman,
+        private ghostser: GhoststepsService
     ) {
         this.ghostImage.src = 'assets/img/ghost.png';
         this.frameCount = 7;
@@ -33,23 +33,22 @@ export class Ghost {
             this.changeAnimation();
         }, 100);
 
-        this.preloadPathQueue(pacman, ghostser); // Preload initial path
     }
 
-    async preloadPathQueue(pacman: Pacman, ghostservi: GhoststepsService) {
-        while (this.pathQueue.length < 3) { // Maintain a buffer of 5 positions
+    async preloadPathQueue() {
+        while (this.pathQueue.length < 3) { // Maintain a buffer of 3 positions
             const init = this.pathQueue.length > 0 ? this.pathQueue[this.pathQueue.length - 1] : { x: this.getMapX(), y: this.getMapY() };
-            const fin = { x: pacman.getMapX(), y: pacman.getMapY() };
-            const nextPosition = await ghostservi.getNextPositionFromAPI(init, fin);
+            const fin = { x: this.pacman.getMapX(), y: this.pacman.getMapY() };
+            const nextPosition = await this.ghostser.getNextPositionFromAPI(init, fin);
             if (nextPosition) {
                 this.pathQueue.push(nextPosition);
             }
         }
     }
 
-    async moveProcess(pacman: Pacman, ghostservi: GhoststepsService) {
+    async moveProcess() {
         if (this.pathQueue.length === 0) {
-            await this.preloadPathQueue(pacman, ghostservi); // Ensure the queue is preloaded
+            await this.preloadPathQueue(); // Ensure the queue is preloaded
         }
 
         if (this.pathQueue.length > 0) {
@@ -81,7 +80,7 @@ export class Ghost {
             }
 
             // Preload new positions if needed
-            await this.preloadPathQueue(pacman, ghostservi);
+            await this.preloadPathQueue();
         }
     }
 

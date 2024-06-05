@@ -25,7 +25,7 @@ export class CanvasComponent implements AfterViewInit {
   ghost!: Ghost
   ghost2!: Ghost
   scoreReady: boolean = false;
-  lives: number = 3; 
+  lives: number = 3;
 
   fps: number = 10;
 
@@ -124,9 +124,9 @@ export class CanvasComponent implements AfterViewInit {
     this.pacman.eat(this.tableroService.map)
     console.log(this.pacman.getScore())
     this.pacman.draw()
-    this.ghost.moveProcess(this.pacman, this.ghostservi)
+    this.ghost.moveProcess()
     this.ghost.draw()
-    this.ghost2.moveProcess(this.pacman, this.ghostservi)
+    this.ghost2.moveProcess()
     this.ghost2.draw()
   }
 
