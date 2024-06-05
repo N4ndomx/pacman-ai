@@ -1,2 +1,13 @@
-<canvas #canvasElement width="500" height="500"></canvas>
-<div id="score" *ngIf="scoreReady">Puntos: {{ pacman.getScore() }}</div>
+<!-- src/app/pacman/pacman.component.html -->
+<body>
+    <div class="container">
+        <h1 class="title">Pacman</h1>
+        <div id="score" *ngIf="scoreReady">Score: {{ pacman.getScore() }} Lives: 
+            <div class="lives-container">
+                <img class="life-icon" src="../../assets/img/iconopacman.png" *ngFor="let index of [].constructor(lives); let i = index" alt="Pacman Life Icon">
+            </div>
+        </div>
+        <canvas #canvasElement width="430" height="480"></canvas>
+        <button class="reset-button" (click)="reinicio()" >Restart</button>
+    </div>
+</body>

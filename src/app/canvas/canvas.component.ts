@@ -25,6 +25,7 @@ export class CanvasComponent implements AfterViewInit {
   ghost!: Ghost
   ghost2!: Ghost
   scoreReady: boolean = false;
+  lives: number = 3; 
 
   fps: number = 10;
 
@@ -154,7 +155,7 @@ export class CanvasComponent implements AfterViewInit {
         }
         // Dibujar superpuntos (si es necesario)
         else if (map[i][j] === 3) {
-          this.ctx.fillStyle = 'red';
+          this.ctx.fillStyle = 'white';
           this.ctx.beginPath();
           this.ctx.arc(x + blockSize / 2, y + blockSize / 2, blockSize / 3, 0, Math.PI * 2);
           this.ctx.fill();
@@ -185,6 +186,11 @@ export class CanvasComponent implements AfterViewInit {
         break;
     }
   }
+
+  reinicio() {
+    location.reload();
+  }
+
 }
 
 
