@@ -5,7 +5,7 @@ export class Pacman {
     private direction: DIRECTION
     private nextDirection: DIRECTION
     private frameCount: number
-    private currentFrame = 1;
+    private currentFrame = 0;
     private pacmanImage: HTMLImageElement = new Image();
     score: number = 0
 
@@ -23,11 +23,11 @@ export class Pacman {
         this.pacmanImage.src = 'assets/img/animations.gif'
         this.direction = DIRECTION.DIRECTION_RIGHT;
         this.nextDirection = DIRECTION.DIRECTION_RIGHT;
-        this.frameCount = 7;
+        this.frameCount = 6;
         this.currentFrame = 1;
         setInterval(() => {
             this.changeAnimation();
-        }, 10);
+        }, 100);
     }
 
     moveProcess() {
@@ -46,8 +46,6 @@ export class Pacman {
 
         this.logPosition()
 
-        //this.logMovement();
-        //this.sendMovementsToAPI();
     }
 
     //logMovement() {
@@ -72,16 +70,18 @@ export class Pacman {
     }
 
 
-    eat(map: number[][],) {
-        for (let i = 0; i < map.length + 1; i++) {
-            for (let j = 0; j < map[0].length + 1; j++) {
-                if (map[j][i] === 2 && this.getMapX() == j && this.getMapY() == i) {
-                    map[j][i] = 0;
-                    this.score++
+    eat(map: number[][]) {
+        console.log(map);
+        for (let i = 0; i < map.length; i++) {
+            for (let j = 0; j < map[0].length; j++) {
+                if (map[i][j] === 2 && this.getMapY() == i && this.getMapX() == j) {
+                    map[i][j] = 0;
+                    this.score++;
                 }
             }
         }
     }
+
 
 
     moveForwards() {
@@ -111,9 +111,9 @@ export class Pacman {
         let isCollided = false;
         if (
             this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize).toString())][parseInt((this.x / this.tablero.oneBlockSize).toString())] == 1 ||
-            this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize + 0.9999).toString())][parseInt((this.x / this.tablero.oneBlockSize).toString())] == 1 ||
-            this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize).toString())][parseInt((this.x / this.tablero.oneBlockSize + 0.9999).toString())] == 1 ||
-            this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize + 0.9999).toString())][parseInt((this.x / this.tablero.oneBlockSize + 0.9999).toString())] == 1
+            this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize + 0.8).toString())][parseInt((this.x / this.tablero.oneBlockSize).toString())] == 1 ||
+            this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize).toString())][parseInt((this.x / this.tablero.oneBlockSize + 0.8).toString())] == 1 ||
+            this.tablero.map[parseInt((this.y / this.tablero.oneBlockSize + 0.98).toString())][parseInt((this.x / this.tablero.oneBlockSize + 0.8).toString())] == 1
         ) {
             isCollided = true;
         }
@@ -150,11 +150,11 @@ export class Pacman {
     }
 
     getMapX(): number {
-        return Math.floor(this.y / this.tablero.oneBlockSize);
+        return Math.floor(this.x / this.tablero.oneBlockSize);
     }
 
     getMapY(): number {
-        return Math.floor(this.x / this.tablero.oneBlockSize);
+        return Math.floor(this.y / this.tablero.oneBlockSize);
     }
     getMapXRightSide() {
         return parseInt(((this.x * 0.99 + this.tablero.oneBlockSize) / this.tablero.oneBlockSize).toString());
@@ -177,7 +177,7 @@ export class Pacman {
         this.ctx.translate(-this.x - this.tablero.oneBlockSize / 2, -this.y - this.tablero.oneBlockSize / 2);
         this.ctx.drawImage(
             this.pacmanImage,
-            (this.currentFrame - 1) * this.tablero.oneBlockSize,
+            (this.currentFrame - 1) * 19.8,
             0,
             this.tablero.oneBlockSize,
             this.tablero.oneBlockSize,
@@ -197,12 +197,3 @@ export class Pacman {
     }
 }
 
-// Pacman.prototype.getNextPosition = function () {
-//     switch (this.direction) {
-//         case DIRECTION_LEFT: return { x: this.getMapX() - 1, y: this.getMapY() };
-//         case DIRECTION_RIGHT: return { x: this.getMapX() + 1, y: this.getMapY() };
-//         case DIRECTION_UP: return { x: this.getMapX(), y: this.getMapY() - 1 };
-//         case DIRECTION_BOTTOM: return { x: this.getMapX(), y: this.getMapY() + 1 };
-//         default: return { x: this.getMapX(), y: this.getMapY() };
-//     }
-// };
