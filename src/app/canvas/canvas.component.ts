@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Ball } from '../game/models/bal';
-import { BallServiceService } from '../services/ball-service.service';
 import { Pacman } from '../game/models/pacman';
 import { TableroService } from '../services/tablero.service';
 import { DIRECTION } from './Dir.enum';
@@ -10,6 +9,7 @@ import { ghostImageLocations } from './Ghost.tails';
 import { Ghost2 } from '../game/models/ghost2';
 import { Ghost3 } from '../game/models/ghost3';
 import { Ghost4 } from '../game/models/ghost4';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-canvas',
@@ -31,7 +31,7 @@ export class CanvasComponent implements AfterViewInit {
   ghost4!: Ghost
   scoreReady: boolean = false;
   lives: number = 3;
-
+  scoreTemp=0;
   fps: number = 10;
   interval:any;
 
@@ -47,7 +47,6 @@ export class CanvasComponent implements AfterViewInit {
     this.ctx = this.canvas.nativeElement.getContext('2d')!;
     this.ctx.fillStyle = this.tableroService.wallInnerColor
     await this.tableroService.getMapAPI()
-    this.ghostservi.map = this.tableroService.map
 
 
     // this.pacman = new Pacman(0, 0, 20, 20, 2, this.canvas.nativeElement, this.tableroService, this.ctx);
@@ -62,7 +61,7 @@ export class CanvasComponent implements AfterViewInit {
       this.ctx,
     );
     this.scoreReady = true
-    let pos = findValidGhostPosition(this.ghostservi.map, this.tableroService.oneBlockSize);
+    
     this.ghost = new Ghost(
       //pos.x ?? 0,
       //pos.y ?? 0,
@@ -111,12 +110,13 @@ export class CanvasComponent implements AfterViewInit {
       this.tableroService, this.ctx,
       this.pacman, this.ghostservi
     )
+    this.scoreTemp+=this.tableroService.bolitas_ganar();
     this.pacman.setGhosts([this.ghost, this.ghost2, this.ghost3, this.ghost4]);
     this.startInterval();
   }
 
   startInterval(){
-    this.interval=setInterval(() => this.updateAndDraw(), 1000 / this.fps);
+    this.interval=setInterval(async() => await this.updateAndDraw(), 1000 / this.fps);
   }
 
   stopInterval(){
@@ -166,6 +166,15 @@ export class CanvasComponent implements AfterViewInit {
       }
     }
     this.pacman.eat(this.tableroService.map)
+    timer(2000).subscribe(async ()=>{
+      if(this.pacman.getScore()==this.scoreTemp){
+        this.stopInterval()
+        await this.tableroService.getMapAPI()
+        this.pacman.lossUp()
+        this.scoreTemp+=this.tableroService.bolitas_ganar();
+        this.startInterval()
+      }
+    })
     this.pacman.draw()
     this.ghost.moveProcess()
     this.ghost.draw()

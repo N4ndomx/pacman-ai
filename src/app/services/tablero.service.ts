@@ -72,7 +72,7 @@ export class TableroService {
   async nextLevel() {
     this.currentLevel++;
     await this.getMapAPI()
-    console.log("You have completed all levels!");
+    //console.log("You have completed all levels!");
     // Implement game over logic or reset to level 1
   }
 }

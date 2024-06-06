@@ -1,15 +1,12 @@
-import { TableroService } from "src/app/services/tablero.service";
 import { Ghost } from "./ghost";
-import { Pacman } from "./pacman";
-import { GhoststepsService } from "src/app/services/ghoststeps.service";
 import { DIRECTION } from "src/app/canvas/Dir.enum";
 
 export class Ghost4 extends Ghost {
 
     override getCenter(): void {
         var map = this.tablero.map
-        this.y = ((Math.floor(map.length / 2)) * 21)
-        this.x = ((Math.floor(map[0].length / 2)) * 21)
+        this.y = ((Math.floor(map.length / 2)+1) * this.tablero.oneBlockSize)
+        this.x = ((Math.floor(map[0].length / 2)) * this.tablero.oneBlockSize)
         this.pathQueue = []
     }
 

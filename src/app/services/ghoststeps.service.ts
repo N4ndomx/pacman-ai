@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TableroService } from './tablero.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GhoststepsService {
-  map!: number[][];
+  //map!: number[][];
   private apiUrl = 'http://localhost:8000';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private tablero:TableroService) { }
 
   // async getNextPositionFromAPI(init: { x: number, y: number }, fin: { x: number, y: number }): Promise<{ x: number, y: number } | null> {
   //   try {
@@ -23,9 +24,10 @@ export class GhoststepsService {
   //   }
   // }
 
+
   async getNextPositionFromAPI(init: { x: number, y: number }, fin: { x: number, y: number }): Promise<{ x: number, y: number } | null> {
     const body = {
-      mapa: this.map,
+      mapa: this.tablero.map,
       inicio: [init.x, init.y],
       final: [fin.x, fin.y]
     }
