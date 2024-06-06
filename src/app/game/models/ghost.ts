@@ -21,24 +21,25 @@ export class Ghost {
         private canvas: HTMLCanvasElement,
         protected tablero: TableroService,
         private ctx: CanvasRenderingContext2D,
-        private pacman: Pacman,
-        private ghostser: GhoststepsService
+        protected pacman: Pacman,
+        protected ghostser: GhoststepsService
     ) {
         this.ghostImage.src = 'assets/img/ghost.png';
         this.frameCount = 7;
         this.currentFrame = 1;
         this.moveSpeed = 3.7; // Velocidad de movimiento en píxeles por frame
-        this.getCenter(this.tablero)
+        this.getCenter()
         setInterval(() => {
             this.changeAnimation();
         }, 100);
 
     }
 
-    getCenter(tablero:TableroService){
-        var map = tablero.map
+    getCenter(){
+        var map = this.tablero.map
         this.y = ((Math.floor(map.length/2)-1)*20)
         this.x = ((Math.floor(map[0].length/2))*20)
+        this.pathQueue=[]
     }
 
     async preloadPathQueue() {

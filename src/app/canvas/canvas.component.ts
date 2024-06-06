@@ -33,6 +33,7 @@ export class CanvasComponent implements AfterViewInit {
   lives: number = 3;
 
   fps: number = 10;
+  interval:any;
 
   constructor(
     // private ballService: BallServiceService,
@@ -109,9 +110,18 @@ export class CanvasComponent implements AfterViewInit {
       this.tableroService, this.ctx,
       this.pacman, this.ghostservi
     )
-
-    setInterval(() => this.updateAndDraw(), 1000 / this.fps);
+    this.pacman.setGhosts([this.ghost, this.ghost2, this.ghost3, this.ghost4]);
+    this.startInterval();
   }
+
+  startInterval(){
+    this.interval=setInterval(() => this.updateAndDraw(), 1000 / this.fps);
+  }
+
+  stopInterval(){
+    clearInterval(this.interval);
+  }
+
 
   drawCuadrado() {
     if (this.ctx) {
@@ -148,6 +158,17 @@ export class CanvasComponent implements AfterViewInit {
     // this.ball.procesoMover(this.ballService, this.canvas);
     // this.ball.update(this.canvas.nativeElement)
     this.pacman.moveProcess()
+    let collision=this.pacman.checkGhostCollision()
+    if(collision){
+      this.stopInterval()
+      this.lives-=1
+      if (this.lives>0){
+        this.pacman.lossUp()
+        this.startInterval()
+      }else{
+        window.alert('Haz perdido!!');
+      }
+    }
     this.pacman.eat(this.tableroService.map)
     console.log(this.pacman.getScore())
     this.pacman.draw()
@@ -155,9 +176,9 @@ export class CanvasComponent implements AfterViewInit {
     this.ghost.draw()
     this.ghost2.moveProcess()
     this.ghost2.draw()
-    this.ghost3.moveProcess(this.pacman, this.ghostservi)
+    this.ghost3.moveProcess()
     this.ghost3.draw()
-    this.ghost4.moveProcess(this.pacman, this.ghostservi)
+    this.ghost4.moveProcess()
     this.ghost4.draw()
   }
 

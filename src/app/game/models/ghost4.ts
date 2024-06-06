@@ -6,16 +6,17 @@ import { DIRECTION } from "src/app/canvas/Dir.enum";
 
 export class Ghost4 extends Ghost{
 
-    override getCenter(tablero: TableroService): void {
-        var map = tablero.map
+    override getCenter(): void {
+        var map = this.tablero.map
         this.y = ((Math.floor(map.length/2))*20)
         this.x = ((Math.floor(map[0].length/2))*20)
+        this.pathQueue=[]
     }
 
 
-    override async preloadPathQueue(pacman: Pacman, ghostservi: GhoststepsService): Promise<void> {
+    override async preloadPathQueue(): Promise<void> {
         var option=1;
-        while(pacman.score<30 && this.pathQueue.length < 15){
+        while(this.pacman.score<30 && this.pathQueue.length < 15){
             this.pathQueue.push({x:(Math.floor(this.tablero.map.length/2)), y:(Math.floor(this.tablero.map[0].length/2))-option});
             switch(option){
                 case 1:
@@ -30,9 +31,9 @@ export class Ghost4 extends Ghost{
         }
         while (this.pathQueue.length < 3) { // Maintain a buffer of 5 positions
             const init = this.pathQueue.length > 0 ? this.pathQueue[this.pathQueue.length - 1] : { x: this.getMapX(), y: this.getMapY() };
-            var pacman_x = pacman.getMapY();
-            var pacman_y = pacman.getMapX();
-            switch(pacman.direction){
+            var pacman_x = this.pacman.getMapY();
+            var pacman_y = this.pacman.getMapX();
+            switch(this.pacman.direction){
                 case DIRECTION.DIRECTION_RIGHT:
                     for(var i=0; i<2; i++){
                         if(this.tablero.map[pacman_y][pacman_x+1]!=1){
@@ -70,7 +71,7 @@ export class Ghost4 extends Ghost{
                     }
             }
             const fin = { x: pacman_y, y: pacman_x };
-            const nextPosition = await ghostservi.getNextPositionFromAPI(init, fin);
+            const nextPosition = await this.ghostser.getNextPositionFromAPI(init, fin);
             if (nextPosition) {
                 this.pathQueue.push(nextPosition);
             }
