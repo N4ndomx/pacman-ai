@@ -127,7 +127,7 @@ export class Pacman {
     checkGhostCollision() {
          for (let i = 0; i < this.ghosts.length; i++) {
              let ghost = this.ghosts[i];
-             if (ghost.getMapX() == this.getMapX() && ghost.getMapY() == this.getMapY()) {
+             if (ghost.getMapY() == this.getMapX() && ghost.getMapX() == this.getMapY()) {
                  return true;
              }
          }

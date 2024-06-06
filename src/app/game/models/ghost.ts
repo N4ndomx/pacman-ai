@@ -39,8 +39,8 @@ export class Ghost {
 
     getCenter(){
         var map = this.tablero.map
-        this.y = ((Math.floor(map.length/2)-1)*20)
-        this.x = ((Math.floor(map[0].length/2))*20)
+        this.y = ((Math.floor(map.length/2)-1)*21)
+        this.x = ((Math.floor(map[0].length/2))*21)
         this.pathQueue=[]
     }
 
