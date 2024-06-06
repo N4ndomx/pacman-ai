@@ -5,21 +5,23 @@ import { TableroService } from "src/app/services/tablero.service";
 import { Pacman } from "./pacman";
 
 export class Ghost {
-    private ghostImage: HTMLImageElement = new Image();
-    private frameCount: number;
-    private currentFrame = 1;
-    private moveSpeed: number;
-    private pathQueue: { x: number, y: number }[] = [];
+    protected ghostImage: HTMLImageElement = new Image();
+    protected frameCount: number;
+    protected currentFrame = 1;
+    protected moveSpeed: number;
+    protected pathQueue: { x: number, y: number }[] = [];
+    protected x:number=0;
+    protected y:number=0;
 
     constructor(
-        private x: number,
-        private y: number,
+        //private x: number,
+        //private y: number,
         private tail_x: number,
         private tail_y: number,
         private width: number,
         private height: number,
         private canvas: HTMLCanvasElement,
-        private tablero: TableroService,
+        protected tablero: TableroService,
         private ctx: CanvasRenderingContext2D,
         pacman: Pacman,
         ghostser: GhoststepsService
@@ -28,12 +30,18 @@ export class Ghost {
         this.frameCount = 7;
         this.currentFrame = 1;
         this.moveSpeed = 3.7; // Velocidad de movimiento en píxeles por frame
-
+        this.getCenter(this.tablero)
         setInterval(() => {
             this.changeAnimation();
         }, 100);
 
         this.preloadPathQueue(pacman, ghostser); // Preload initial path
+    }
+
+    getCenter(tablero:TableroService){
+        var map = tablero.map
+        this.y = ((Math.floor(map.length/2)-1)*20)
+        this.x = ((Math.floor(map[0].length/2))*20)
     }
 
     async preloadPathQueue(pacman: Pacman, ghostservi: GhoststepsService) {

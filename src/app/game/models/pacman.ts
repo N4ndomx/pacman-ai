@@ -2,8 +2,8 @@ import { DIRECTION } from "src/app/canvas/Dir.enum";
 import { TableroService } from "src/app/services/tablero.service";
 
 export class Pacman {
-    private direction: DIRECTION
-    private nextDirection: DIRECTION
+    public direction: DIRECTION
+    public nextDirection: DIRECTION
     private frameCount: number
     private currentFrame = 1;
     private pacmanImage: HTMLImageElement = new Image();
@@ -167,7 +167,6 @@ export class Pacman {
     changeAnimation() {
         this.currentFrame = this.currentFrame == this.frameCount ? 1 : this.currentFrame + 1;
     }
-
 
 
     draw() {
