@@ -7,6 +7,9 @@ import { DIRECTION } from './Dir.enum';
 import { findValidGhostPosition, Ghost } from '../game/models/ghost';
 import { GhoststepsService } from '../services/ghoststeps.service';
 import { ghostImageLocations } from './Ghost.tails';
+import { Ghost2 } from '../game/models/ghost2';
+import { Ghost3 } from '../game/models/ghost3';
+import { Ghost4 } from '../game/models/ghost4';
 
 @Component({
   selector: 'app-canvas',
@@ -24,10 +27,13 @@ export class CanvasComponent implements AfterViewInit {
   pacman!: Pacman
   ghost!: Ghost
   ghost2!: Ghost
+  ghost3!: Ghost
+  ghost4!: Ghost
   scoreReady: boolean = false;
   lives: number = 3;
 
   fps: number = 10;
+  interval:any;
 
   constructor(
     // private ballService: BallServiceService,
@@ -58,9 +64,8 @@ export class CanvasComponent implements AfterViewInit {
     this.scoreReady = true
     let pos = findValidGhostPosition(this.ghostservi.map, this.tableroService.oneBlockSize);
     this.ghost = new Ghost(
-      // 80, 80,
-      pos.x ?? 0,
-      pos.y ?? 0,
+      //pos.x ?? 0,
+      //pos.y ?? 0,
       ghostImageLocations[0].x,
       ghostImageLocations[0].y,
       this.tableroService.oneBlockSize,
@@ -69,21 +74,56 @@ export class CanvasComponent implements AfterViewInit {
       this.tableroService, this.ctx,
       this.pacman, this.ghostservi
     )
-    // this.ghost2 = new Ghost(
-    //   // 80, 80,
-    //   pos.x ?? 0,
-    //   pos.y ?? 0,
-    //   ghostImageLocations[1].x,
-    //   ghostImageLocations[1].y,
-    //   this.tableroService.oneBlockSize,
-    //   this.tableroService.oneBlockSize,
-    //   this.canvas.nativeElement,
-    //   this.tableroService, this.ctx,
-    //   this.pacman, this.ghostservi
-    // )
 
-    setInterval(() => this.updateAndDraw(), 1000 / this.fps);
+    this.ghost2 = new Ghost2(
+      // pos.x ?? 0,
+      // pos.y ?? 0,
+      ghostImageLocations[1].x,
+      ghostImageLocations[1].y,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.canvas.nativeElement,
+      this.tableroService, this.ctx,
+      this.pacman, this.ghostservi
+    )
+
+
+    this.ghost3 = new Ghost3(
+      // pos.x ?? 0,
+      // pos.y ?? 0,
+      ghostImageLocations[2].x,
+      ghostImageLocations[2].y,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.canvas.nativeElement,
+      this.tableroService, this.ctx,
+      this.pacman, this.ghostservi
+    )
+
+    this.ghost4 = new Ghost4(
+      // pos.x ?? 0,
+      // pos.y ?? 0,
+      ghostImageLocations[3].x,
+      ghostImageLocations[3].y,
+      this.tableroService.oneBlockSize,
+      this.tableroService.oneBlockSize,
+      this.canvas.nativeElement,
+      this.tableroService, this.ctx,
+      this.pacman, this.ghostservi
+    )
+    this.pacman.setGhosts([this.ghost, this.ghost2, this.ghost3, this.ghost4]);
+    this.startInterval();
   }
+
+  startInterval(){
+    this.interval=setInterval(() => this.updateAndDraw(), 1000 / this.fps);
+  }
+
+  stopInterval(){
+    clearInterval(this.interval);
+  }
+
+
 
 
 
@@ -114,12 +154,29 @@ export class CanvasComponent implements AfterViewInit {
     // this.ball.procesoMover(this.ballService, this.canvas);
     // this.ball.update(this.canvas.nativeElement)
     this.pacman.moveProcess()
+    let collision=this.pacman.checkGhostCollision()
+    if(collision){
+      this.stopInterval()
+      this.lives-=1
+      if (this.lives>0){
+        this.pacman.lossUp()
+        this.startInterval()
+      }else{
+        window.alert('Haz perdido!!');
+      }
+    }
     this.pacman.eat(this.tableroService.map)
     this.pacman.draw()
     this.ghost.moveProcess()
     this.ghost.draw()
-    // this.ghost2.moveProcess()
-    // this.ghost2.draw()
+
+    this.ghost2.moveProcess()
+    this.ghost2.draw()
+    this.ghost3.moveProcess()
+    this.ghost3.draw()
+    this.ghost4.moveProcess()
+    this.ghost4.draw()
+
   }
 
 

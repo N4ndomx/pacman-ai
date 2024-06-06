@@ -1,14 +1,15 @@
 import { DIRECTION } from "src/app/canvas/Dir.enum";
 import { TableroService } from "src/app/services/tablero.service";
+import { Ghost } from "./ghost";
 
 export class Pacman {
-    private direction: DIRECTION
-    private nextDirection: DIRECTION
+    public direction: DIRECTION
+    public nextDirection: DIRECTION
     private frameCount: number
     private currentFrame = 0;
     private pacmanImage: HTMLImageElement = new Image();
     score: number = 0
-
+    ghosts:Ghost[]=[]
 
     constructor(
         private x: number,
@@ -30,6 +31,10 @@ export class Pacman {
         }, 100);
     }
 
+    setGhosts(ghosts:Ghost[]){
+        this.ghosts=ghosts;
+    }
+
     moveProcess() {
         this.changeDirectionIfPossible();
         this.moveForwards();
@@ -42,7 +47,6 @@ export class Pacman {
         } else if (this.x < 0) {
             this.x = this.canvas.width - this.width;
         }
-
 
         this.logPosition()
 
@@ -120,15 +124,15 @@ export class Pacman {
         return isCollided;
     }
 
-    // checkGhostCollision(ghosts) {
-    //     for (let i = 0; i < ghosts.length; i++) {
-    //         let ghost = ghosts[i];
-    //         if (ghost.getMapX() == this.getMapX() && ghost.getMapY() == this.getMapY()) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
+    checkGhostCollision() {
+         for (let i = 0; i < this.ghosts.length; i++) {
+             let ghost = this.ghosts[i];
+             if (ghost.getMapX() == this.getMapX() && ghost.getMapY() == this.getMapY()) {
+                 return true;
+             }
+         }
+         return false;
+    }
 
     changeDirectionIfPossible() {
         if (this.direction == this.nextDirection) return;
@@ -169,7 +173,6 @@ export class Pacman {
     }
 
 
-
     draw() {
         this.ctx.save();
         this.ctx.translate(this.x + this.tablero.oneBlockSize / 2, this.y + this.tablero.oneBlockSize / 2);
@@ -194,6 +197,13 @@ export class Pacman {
     }
     getScore(): number {
         return this.score
+    }
+    
+    lossUp(){
+        this.x=this.tablero.oneBlockSize
+        this.y=this.tablero.oneBlockSize
+        this.direction=DIRECTION.DIRECTION_RIGHT
+        this.ghosts.forEach((ghost)=>ghost.getCenter())
     }
 }
 

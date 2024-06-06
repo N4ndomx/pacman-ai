@@ -3,29 +3,33 @@ import { TableroService } from "src/app/services/tablero.service";
 import { Pacman } from "./pacman";
 
 export class Ghost {
-    private ghostImage: HTMLImageElement = new Image();
-    private frameCount: number;
-    private currentFrame = 1;
-    private moveSpeed: number;
-    private pathQueue: { x: number, y: number }[] = [];
+    protected ghostImage: HTMLImageElement = new Image();
+    protected frameCount: number;
+    protected currentFrame = 1;
+    protected moveSpeed: number;
+    protected pathQueue: { x: number, y: number }[] = [];
+    protected x:number=0;
+    protected y:number=0;
 
     constructor(
-        private x: number,
-        private y: number,
+        //private x: number,
+        //private y: number,
         private tail_x: number,
         private tail_y: number,
         private width: number,
         private height: number,
         private canvas: HTMLCanvasElement,
-        private tablero: TableroService,
+        protected tablero: TableroService,
         private ctx: CanvasRenderingContext2D,
-        private pacman: Pacman,
-        private ghostser: GhoststepsService
+        protected pacman: Pacman,
+        protected ghostser: GhoststepsService
     ) {
         this.ghostImage.src = 'assets/img/ghost.png';
         this.frameCount = 7;
         this.currentFrame = 1;
-        this.moveSpeed = 3.8; // Velocidad de movimiento en píxeles por frame
+
+        this.moveSpeed = 3.7; // Velocidad de movimiento en píxeles por frame
+        this.getCenter()
 
         setInterval(() => {
             this.changeAnimation();
@@ -33,8 +37,15 @@ export class Ghost {
 
     }
 
+    getCenter(){
+        var map = this.tablero.map
+        this.y = ((Math.floor(map.length/2)-1)*20)
+        this.x = ((Math.floor(map[0].length/2))*20)
+        this.pathQueue=[]
+    }
+
     async preloadPathQueue() {
-        while (this.pathQueue.length < 3) { // Maintain a buffer of 3 positions
+        while (this.pathQueue.length < 3) { // Maintain a buffer of 5 positions
             const init = this.pathQueue.length > 0 ? this.pathQueue[this.pathQueue.length - 1] : { x: this.getMapX(), y: this.getMapY() };
             const fin = { x: this.pacman.getMapY(), y: this.pacman.getMapX() };
             const nextPosition = await this.ghostser.getNextPositionFromAPI(init, fin);
