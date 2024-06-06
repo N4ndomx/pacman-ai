@@ -27,8 +27,10 @@ export class Ghost {
         this.ghostImage.src = 'assets/img/ghost.png';
         this.frameCount = 7;
         this.currentFrame = 1;
+
         this.moveSpeed = 3.7; // Velocidad de movimiento en píxeles por frame
         this.getCenter()
+
         setInterval(() => {
             this.changeAnimation();
         }, 100);
@@ -45,7 +47,7 @@ export class Ghost {
     async preloadPathQueue() {
         while (this.pathQueue.length < 3) { // Maintain a buffer of 5 positions
             const init = this.pathQueue.length > 0 ? this.pathQueue[this.pathQueue.length - 1] : { x: this.getMapX(), y: this.getMapY() };
-            const fin = { x: this.pacman.getMapX(), y: this.pacman.getMapY() };
+            const fin = { x: this.pacman.getMapY(), y: this.pacman.getMapX() };
             const nextPosition = await this.ghostser.getNextPositionFromAPI(init, fin);
             if (nextPosition) {
                 this.pathQueue.push(nextPosition);

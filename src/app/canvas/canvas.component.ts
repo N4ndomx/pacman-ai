@@ -42,14 +42,13 @@ export class CanvasComponent implements AfterViewInit {
     this.setupEventListeners()
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
 
     this.ctx = this.canvas.nativeElement.getContext('2d')!;
     this.ctx.fillStyle = this.tableroService.wallInnerColor
+    await this.tableroService.getMapAPI()
     this.ghostservi.map = this.tableroService.map
 
-    // this.ball = new Ball(this.canvas.nativeElement.width / 4, this.canvas.nativeElement.height / 4, 30, 'blue', 2, 2, this.ctx);
-    // this.ball = new Ball(10, 10, 10, 'blue', 1, 100, this.ctx);
 
     // this.pacman = new Pacman(0, 0, 20, 20, 2, this.canvas.nativeElement, this.tableroService, this.ctx);
     this.pacman = new Pacman(
@@ -63,7 +62,7 @@ export class CanvasComponent implements AfterViewInit {
       this.ctx,
     );
     this.scoreReady = true
-    let pos = findValidGhostPosition(this.tableroService.map, this.tableroService.oneBlockSize);
+    let pos = findValidGhostPosition(this.ghostservi.map, this.tableroService.oneBlockSize);
     this.ghost = new Ghost(
       //pos.x ?? 0,
       //pos.y ?? 0,
@@ -75,6 +74,7 @@ export class CanvasComponent implements AfterViewInit {
       this.tableroService, this.ctx,
       this.pacman, this.ghostservi
     )
+
     this.ghost2 = new Ghost2(
       // pos.x ?? 0,
       // pos.y ?? 0,
@@ -86,6 +86,7 @@ export class CanvasComponent implements AfterViewInit {
       this.tableroService, this.ctx,
       this.pacman, this.ghostservi
     )
+
 
     this.ghost3 = new Ghost3(
       // pos.x ?? 0,
@@ -123,13 +124,8 @@ export class CanvasComponent implements AfterViewInit {
   }
 
 
-  drawCuadrado() {
-    if (this.ctx) {
-      // Aquí puedes añadir tus operaciones de dibujo en el canvas
-      this.ctx.fillStyle = 'red';
-      this.ctx.fillRect(0, 0, 100, 100);
-    }
-  }
+
+
 
   async updateAndDraw() {
     // try {
@@ -170,16 +166,17 @@ export class CanvasComponent implements AfterViewInit {
       }
     }
     this.pacman.eat(this.tableroService.map)
-    console.log(this.pacman.getScore())
     this.pacman.draw()
     this.ghost.moveProcess()
     this.ghost.draw()
+
     this.ghost2.moveProcess()
     this.ghost2.draw()
     this.ghost3.moveProcess()
     this.ghost3.draw()
     this.ghost4.moveProcess()
     this.ghost4.draw()
+
   }
 
 
@@ -206,12 +203,12 @@ export class CanvasComponent implements AfterViewInit {
           this.ctx.fill();
         }
         // Dibujar superpuntos (si es necesario)
-        else if (map[i][j] === 3) {
-          this.ctx.fillStyle = 'white';
-          this.ctx.beginPath();
-          this.ctx.arc(x + blockSize / 2, y + blockSize / 2, blockSize / 3, 0, Math.PI * 2);
-          this.ctx.fill();
-        }
+        // else if (map[i][j] === 3) {
+        //   this.ctx.fillStyle = 'white';
+        //   this.ctx.beginPath();
+        //   this.ctx.arc(x + blockSize / 2, y + blockSize / 2, blockSize / 3, 0, Math.PI * 2);
+        //   this.ctx.fill();
+        // }
       }
     }
   }
